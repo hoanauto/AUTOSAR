@@ -24,11 +24,11 @@ void DIO_WriteChannel(Dio_ChannelType ChannelId, Dio_LevelType Level)
     GPIO_TypeDef *GPIO_Port;
     uint16_t GIPO_Pin;
 
-    GPIO_Port = GPIO_GetPort(ChannelId);
+    GPIO_Port = GPIO_GetPort(ChannelId); //GPIOA,B,C,D,...
     if(GPIO_Port == NULL)
     {
-        Det_ReportError(DIO_MODULE_ID, 0, DIO_WRITECHANNEL_ID, DIO_E_PARAM_INVALID_CHANNEL);
-        return; // Handle error appropriately
+
+        return 0; // Handle error appropriately
     }
     GIPO_Pin = GPIO_GetPin(ChannelId);
     
@@ -57,7 +57,7 @@ Dio_LevelType DIO_ReadChannel(Dio_ChannelType ChannelId)
     GPIO_Port = GPIO_GetPort(ChannelId);
     if(GPIO_Port == NULL)
     {
-        Det_ReportError(DIO_MODULE_ID, 0, DIO_READCHANNEL_ID, DIO_E_PARAM_INVALID_CHANNEL);
+        
         return STD_LOW; // Trả về mặc định khi lỗi
     }
 
@@ -83,7 +83,7 @@ Dio_PortLevelType DIO_ReadPort(Dio_PortType PortId)
 {
     GPIO_TypeDef *GPIO_Port;
 
-    GPIO_Port = GPIO_GetPort(PortId);
+    GPIO_Port = GPIO_GetPortFromPortId(PortId);
     if(GPIO_Port == NULL)
     {
         return 0; // Return a default value or handle error appropriately
@@ -103,11 +103,11 @@ void DIO_WritePort(Dio_PortType PortId, Dio_PortLevelType Level)
 {
     GPIO_TypeDef *GPIO_Port;
 
-    GPIO_Port = GPIO_GetPort(PortId);
+    GPIO_Port = GPIO_GetPortFromPortId(PortId);
     if(GPIO_Port == NULL)
     {
-        Det_ReportError(DIO_MODULE_ID, 0, DIO_WRITEPORT_ID, DIO_E_PARAM_INVALID_PORT);
-        return; // Handle error appropriately
+      
+        return 0; // Handle error appropriately
     }
     
     GPIO_Write(GPIO_Port, Level);
@@ -131,7 +131,7 @@ Dio_PortLevelType DIO_ReadChannelGroup(const Dio_ChannelGroupType* ChannelGroupI
         return 0; // Return a default value or handle error appropriately
     }
 
-    GPIO_Port = GPIO_GetPort(ChannelGroupIdPtr->port);
+    GPIO_Port = GPIO_GetPortFromPortId(ChannelGroupIdPtr->port);
     if(GPIO_Port == NULL)
     {
         return 0; // Return a default value or handle error appropriately
@@ -161,7 +161,7 @@ void DIO_WriteChannelGroup(const Dio_ChannelGroupType* ChannelGroupIdPtr, Dio_Po
         return; // Handle error appropriately
     }
 
-    GPIO_Port = GPIO_GetPort(ChannelGroupIdPtr->port);
+    GPIO_Port = GPIO_GetPortFromPortId(ChannelGroupIdPtr->port);
     if(GPIO_Port == NULL)
     {
         return; // Handle error appropriately
@@ -169,9 +169,9 @@ void DIO_WriteChannelGroup(const Dio_ChannelGroupType* ChannelGroupIdPtr, Dio_Po
     
     mask = ChannelGroupIdPtr->mask;
     offset = ChannelGroupIdPtr->offset;
-
-    Dio_PortLevelType currentLevel = GPIO_ReadInputData(GPIO_Port) & ~mask;
-    currentLevel |= (Level << offset) & mask;
+    // làm cách này để tránh đưa level vào tất cả các bit còn lại, phải giữ được giá trị của các bit k sử dụng
+    Dio_PortLevelType currentLevel = GPIO_ReadInputData(GPIO_Port) & ~mask; //xoa bit o mask, giữ lại giá trị các bit k sử dụng
+    currentLevel |= (Level << offset) & mask; // đưa giá trị vào và & với mask để k ảnh hưởng các bit còn lại
 
     GPIO_Write(GPIO_Port, currentLevel);
 }
@@ -240,7 +240,7 @@ void DIO_MaskedWritePort(Dio_PortType PortId, Dio_PortLevelType Level, Dio_PortL
 {
     GPIO_TypeDef *GPIO_Port;
 
-    GPIO_Port = GPIO_GetPort(PortId);
+    GPIO_Port = GPIO_GetPortFromPortId(PortId);
     if(GPIO_Port == NULL)
     {
         return; // Handle error appropriately

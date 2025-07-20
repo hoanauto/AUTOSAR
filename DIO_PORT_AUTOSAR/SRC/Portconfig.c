@@ -41,12 +41,12 @@ const Port_PinConfigType PortCfg_Pins[] = {
     {
         .PortNum = PORT_ID_A,
         .PinNum = 1,
-        .Mode = PORT_PIN_MODE_DIO,
-        .Speed = PORT_SPEED_10Mhz, // Tốc độ 10MHz
-        .Direction = PORT_PIN_IN,
+        .Mode = PORT_PIN_MODE_PWM,
+        .Speed = PORT_SPEED_50Mhz, // Tốc độ 10MHz
+        .Direction = PORT_PIN_OUT,
         .DirectionChangeable = 0,
         .Level = PORT_PIN_LEVEL_LOW, /* Không ảnh hưởng nếu là input */
-        .Pull = PORT_PIN_PULL_UP,
+        .Pull = PORT_PIN_PULL_NONE,
         .ModeChangeable = 0
     },
     /* PB0: DIO, Output, Không đổi chiều, mặc định LOW, không pull */
@@ -70,13 +70,13 @@ const Port_PinConfigType PortCfg_Pins[] = {
         .Direction = PORT_PIN_OUT,
         .DirectionChangeable = 1,
         .Level = PORT_PIN_LEVEL_LOW,
-        .Pull = PORT_PIN_PULL_UP,
+        .Pull = PORT_PIN_PULL_NONE,
         .ModeChangeable = 1
     },
     {
         .PortNum              = PORT_ID_A,
         .PinNum               = 3,
-        .Mode                 = PORT_PIN_MODE_AF_PP,    // Alternate Function Push-Pull
+        .Mode                 = PORT_PIN_MODE_PWM,    
         .Speed                = PORT_SPEED_10Mhz, // Tốc độ 2MHz
         .Direction            = PORT_PIN_OUT,
         .DirectionChangeable  = 0,
@@ -88,8 +88,8 @@ const Port_PinConfigType PortCfg_Pins[] = {
     {
         .PortNum              = PORT_ID_A,
         .PinNum               = 7,
-        .Mode                 = PORT_PIN_MODE_AF_PP,    // Alternate Function Push-Pull
-        .Speed                = PORT_SPEED_10Mhz, // Tốc độ 2MHz
+        .Mode                 = PORT_PIN_MODE_PWM,    // Alternate Function Push-Pull
+        .Speed                = PORT_SPEED_50Mhz, // Tốc độ 2MHz
         .Direction            = PORT_PIN_OUT,
         .DirectionChangeable  = 0,
         .Level                = PORT_PIN_LEVEL_LOW,

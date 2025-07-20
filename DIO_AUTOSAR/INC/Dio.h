@@ -18,9 +18,9 @@
  * ========================================================
  * Macro xác định cổng GPIO dựa trên ID kênh.
  ********************************************************/
-
+// < 16 là từ 0 đến 15
 #define GPIO_GetPort(ChannelId) \
-    ((ChannelId) < 16 ? GPIOA : \
+    ((ChannelId) < 16 ? GPIOA : \ 
     (ChannelId) < 32 ? GPIOB : \
     (ChannelId) < 48 ? GPIOC : \
     (ChannelId) < 64 ? GPIOD : \
@@ -36,6 +36,23 @@
      **********************************************************/
 
 #define GPIO_GetPin(ChannelId) (1<<(ChannelId) % 16)
+
+   /**********************************************************
+     * ========================================================
+     * DIO PordID Definitions
+     * ========================================================
+     * Macro xác định cổng GPIO dựa vào PortID
+     **********************************************************/
+
+#define GPIO_GetPortFromPortId(PortId) \
+    ((PortId) == 0 ? GPIOA : \
+    (PortId) == 1 ? GPIOB : \
+    (PortId) == 2 ? GPIOC : \
+    (PortId) == 3 ? GPIOD : \
+    (PortId) == 4 ? GPIOE : \
+    (PortId) == 5 ? GPIOF : \
+    (PortId) == 6 ? GPIOG : NULL)
+
 
     /**************************************************** 
      * ========================================================
@@ -54,10 +71,15 @@
      * Các định nghĩa cổng DIO.
      **********************************************************/
 
+
 #define DIO_PORT_A 0
 #define DIO_PORT_B 1
 #define DIO_PORT_C 2
 #define DIO_PORT_D 3
+#define DIO_PORT_E 4
+#define DIO_PORT_F 5
+#define DIO_PORT_G 6
+
 
     /*******************************************************
      * ========================================================
@@ -184,16 +206,6 @@ typedef struct
     uint8 offset;
 } Dio_ChannelGroupType;
 
-/**********************************************************
- * ========================================================
- * Định nghĩa kiểu dữ liệu cho DIO Port Level
- * ========================================================
- * @typedef Dio_PortLevelType
- * @brief kieu dữ liệu đại diện cho mức độ của một cổng DIO.
- * @details kiểu này được sử dụng để đọc hoặc ghi mức độ của toàn bộ cổng GPIO.
- **********************************************************/
-
-typedef uint8 Dio_LevelType;
 
 /**********************************************************
  * ========================================================

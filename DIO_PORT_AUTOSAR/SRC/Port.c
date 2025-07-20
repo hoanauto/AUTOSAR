@@ -17,6 +17,8 @@
 #include "Portconfig.h"
 #include "stm32f10x_rcc.h"
 #include <stddef.h>
+#include "stm32f10x.h"
+#include"stm32f10x_gpio.h"
 
 /* ===============================
  *     Static/Internal Variables
@@ -54,7 +56,8 @@ static void Port_ApplyPinConfig(const Port_PinConfigType* pinCfg) {
     }
 
     /* Cấu hình mode - chỉ lấy ví dụ mode DIO */
-    if (pinCfg->Mode == PORT_PIN_MODE_DIO) {
+    switch(pinCfg->Mode) {
+    case  PORT_PIN_MODE_DIO: 
         if (pinCfg->Direction == PORT_PIN_OUT) { // output
             GPIO_InitStruct.GPIO_Mode = (pinCfg->Pull == PORT_PIN_PULL_UP) ? GPIO_Mode_Out_PP : GPIO_Mode_Out_OD;
         } else {
@@ -65,7 +68,13 @@ static void Port_ApplyPinConfig(const Port_PinConfigType* pinCfg) {
             else
                 GPIO_InitStruct.GPIO_Mode = GPIO_Mode_IN_FLOATING;
         }
+        break;
+    case PORT_PIN_MODE_PWM: GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        break;
+    case PORT_PIN_MODE_SPI: GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_PP;
+        break;
     }
+
     /* Các mode khác như ADC, PWM, SPI ... mở rộng thêm tùy MCU */
 
     /* Khởi tạo chân */

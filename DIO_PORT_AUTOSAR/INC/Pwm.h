@@ -12,7 +12,7 @@
 
 #ifndef PWM_H
 #define PWM_H
-
+#include "stm32f10x.h"
 #include "Std_Types.h"          /* Các kiểu dữ liệu chuẩn AUTOSAR */
 #include "stm32f10x_tim.h"      /* Thư viện SPL: Timer PWM cho STM32F103 */
 
@@ -70,6 +70,7 @@ typedef enum {
 typedef struct {
     TIM_TypeDef*              TIMx;             /**< Timer sử dụng (TIM1, TIM2, ...) */
     uint8                     channel;          /**< Channel số (1, 2, 3, 4) */
+    uint16                    prescaler;
     Pwm_ChannelClassType      classType;        /**< Loại kênh */
     Pwm_PeriodType            defaultPeriod;    /**< Chu kỳ mặc định */
     uint16                    defaultDutyCycle; /**< Duty Cycle mặc định (0x0000 - 0x8000) */

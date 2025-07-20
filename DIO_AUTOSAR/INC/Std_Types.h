@@ -53,7 +53,7 @@ typedef struct {
     uint8_t  sw_major_version; //Phiên bản chính của phần mềm
     uint8_t  sw_minor_version; // Phiên bản phụ của phần mềm
     uint8_t  sw_patch_version; // Phiên bản sửa lỗi của phần mềm
-} Std_VersionInfoType;
+} Std_VersionInfoType;// phiên bản driver 
 /* Định nghĩa kiểu dữ liệu cho các giá trị số nguyên không dấu */
 typedef uint8_t    uint8;    /**< 8-bit unsigned integer */
 typedef uint16_t   uint16;   /**< 16-bit unsigned integer */

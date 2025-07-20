@@ -8,7 +8,9 @@
  * @date    2024-06-27
  * @author  HALA Academy
  **********************************************************/
-
+#include "stm32f10x.h"
+#include "stm32f10x_rcc.h"
+#include "stm32f10x_tim.h"
 #include "Pwm.h"
 #include <stddef.h>
 
@@ -45,19 +47,59 @@ void Pwm_Init(const Pwm_ConfigType* ConfigPtr)
         /* Cấu hình chu kỳ cho timer (ARR) */
         channelConfig->TIMx->ARR = channelConfig->defaultPeriod;
 
-        /* Giá trị compare ban đầu theo duty cycle mặc định */
-        uint16_t compareValue = ((uint32_t)channelConfig->defaultPeriod * channelConfig->defaultDutyCycle) >> 15;
-        switch (channelConfig->channel) {
-        case 1: channelConfig->TIMx->CCR1 = compareValue; break;
-        case 2: channelConfig->TIMx->CCR2 = compareValue; break;
-        case 3: channelConfig->TIMx->CCR3 = compareValue; break;
-        case 4: channelConfig->TIMx->CCR4 = compareValue; break;
-        default: break;
+        /*bật clock cho timer*/
+        if(channelConfig -> TIMx == TIM2) {
+            RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+        } else if(channelConfig -> TIMx == TIM3) {
+            RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+        } else if(channelConfig -> TIMx == TIM4) {
+            RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+        } else if(channelConfig -> TIMx == TIM1) {
+            RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE);
         }
 
-        /* Bật timer */
-        TIM_Cmd(channelConfig->TIMx, ENABLE);
+        /* Cấu hình timer */
+    
+        TIM_TimeBaseInitTypeDef TIM_InitStructure;
+        TIM_InitStructure.TIM_Prescaler = channelConfig->prescaler; // Prescaler
+        TIM_InitStructure.TIM_CounterMode = TIM_CounterMode_Up; // Chế độ đếm lên
+        TIM_InitStructure.TIM_Period = channelConfig->defaultPeriod; // Chu kỳ (ARR)
+        TIM_InitStructure.TIM_ClockDivision = TIM_CKD_DIV1; // Phân chia xung đồng hồ
+        TIM_InitStructure.TIM_RepetitionCounter = 0; // Chỉ cần 0 cho chế độ PWM
+        TIM_TimeBaseInit(channelConfig->TIMx, &TIM_InitStructure); // Khởi tạo timer
 
+        /*Cấu hình chế độ PWM*/
+        TIM_OCInitTypeDef TIM_OCInitStructure;
+        TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1; // Chế độ PWM1
+        TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; // Bật trạng thái đầu ra
+        TIM_OCInitStructure.TIM_Pulse = ((uint32_t)channelConfig->defaultPeriod * channelConfig->defaultDutyCycle) >> 15; // Giá trị so
+        TIM_OCInitStructure.TIM_OCPolarity = (channelConfig->polarity == PWM_HIGH) ? TIM_OCPolarity_High : TIM_OCPolarity_Low; // Chế độ phân cực
+        TIM_OCInitStructure.TIM_OCIdleState = (channelConfig->idleState == PWM_HIGH) ? TIM_OCIdleState_Set : TIM_OCIdleState_Reset; // Trạng thái idle
+        switch (channelConfig->channel) {
+        case 1:
+            TIM_OC1Init(channelConfig->TIMx, &TIM_OCInitStructure);
+            TIM_OC1PreloadConfig(channelConfig->TIMx, TIM_OCPreload_Enable); // Bật preload cho CCR1
+            break;
+        case 2:
+            TIM_OC2Init(channelConfig->TIMx, &TIM_OCInitStructure);
+            TIM_OC2PreloadConfig(channelConfig->TIMx, TIM_OCPreload_Enable);        // Bật preload cho CCR2    
+            break;
+        case 3:
+            TIM_OC3Init(channelConfig->TIMx, &TIM_OCInitStructure);
+            TIM_OC3PreloadConfig(channelConfig->TIMx, TIM_OCPreload_Enable);
+            break;
+        case 4:
+            TIM_OC4Init(channelConfig->TIMx, &TIM_OCInitStructure);
+            TIM_OC4PreloadConfig(channelConfig->TIMx, TIM_OCPreload_Enable);
+            break;
+        default:
+            /* Không hỗ trợ channel khác */
+            continue;
+        }
+        /* Bật timer */
+        TIM_ARRPreloadConfig(channelConfig->TIMx, ENABLE); // Bật preload cho ARR
+        TIM_Cmd(channelConfig->TIMx, ENABLE);
+        
         /* Nếu là TIM1 (advanced), enable main output */
         if (channelConfig->TIMx == TIM1) {
             TIM_CtrlPWMOutputs(TIM1, ENABLE);

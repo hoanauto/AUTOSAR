@@ -183,16 +183,6 @@ typedef struct
     uint8 offset;
 } Dio_ChannelGroupType;
 
-/**********************************************************
- * ========================================================
- * Định nghĩa kiểu dữ liệu cho DIO Port Level
- * ========================================================
- * @typedef Dio_PortLevelType
- * @brief kieu dữ liệu đại diện cho mức độ của một cổng DIO.
- * @details kiểu này được sử dụng để đọc hoặc ghi mức độ của toàn bộ cổng GPIO.
- **********************************************************/
-
-typedef uint8 Dio_LevelType;
 
 /**********************************************************
  * ========================================================

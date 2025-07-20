@@ -24,11 +24,12 @@ void Pwm_Channel0_Notification(void)
 
 /* ==== Cấu hình từng kênh PWM ==== */
 const Pwm_ChannelConfigType PwmChannelsConfig[] = {
-    /* Channel 0: PA0 - TIM2_CH1, có callback */
+    /* Channel 0: PA1 - TIM2_CH2, có callback */
     {
         .TIMx             = TIM2,
-        .channel          = 1,
+        .channel          = 2,
         .classType        = PWM_VARIABLE_PERIOD,
+        .prescaler        = 0,
         .defaultPeriod    = 999,          // 1ms (72MHz/72/1000)
         .defaultDutyCycle = 0x0000,       // Duty 0%
         .polarity         = PWM_HIGH,
@@ -40,6 +41,7 @@ const Pwm_ChannelConfigType PwmChannelsConfig[] = {
         .TIMx             = TIM3,
         .channel          = 2,
         .classType        = PWM_VARIABLE_PERIOD,
+        .prescaler        = 0,
         .defaultPeriod    = 999,
         .defaultDutyCycle = 0x0000,
         .polarity         = PWM_HIGH,
